@@ -67,6 +67,8 @@ install -m 0644 -vp %{gobuilddir}/config.yaml  %{buildroot}%{_sysconfdir}/tls-sh
 # install: systemd unit file
 install -m 0755 -vd                            %{buildroot}%{_unitdir}
 install -m 0644 -vp %{gobuilddir}/tsp.service  %{buildroot}%{_unitdir}/tls-shunt-proxy.service
+# install: ocsp dir
+install -m 0755 -vd                            %{buildroot}%{_sysconfdir}/ssl/tls-shunt-proxy
 
 
 %files
@@ -78,6 +80,8 @@ install -m 0644 -vp %{gobuilddir}/tsp.service  %{buildroot}%{_unitdir}/tls-shunt
 %config(noreplace) %{_sysconfdir}/tls-shunt-proxy/config.json
 # systemd unit file
 %{_unitdir}/tls-shunt-proxy.service
+# ocsp dir
+%attr(-, %{name}, %{name}) %dir %{_sysconfdir}/ssl/tls-shunt-proxy
 
 
 # Scriptlets >>
