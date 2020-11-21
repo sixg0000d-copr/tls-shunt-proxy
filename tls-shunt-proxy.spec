@@ -10,10 +10,9 @@ Version:                0.6.1
 Name:           tls-shunt-proxy
 Release:        1%{?dist}
 Summary:        A tool to shunt TLS traffic
-
 License:        None
-
 URL:            %{gourl}
+
 # Source is created by:
 # curl -L https://github.com/liberal-boy/tls-shunt-proxy/archive/0.6.1/tls-shunt-proxy-0.6.1.tar.gz -o tls-shunt-proxy-0.6.1.tar.gz
 # tar -xzf tls-shunt-proxy-0.6.1.tar.gz
@@ -23,6 +22,10 @@ URL:            %{gourl}
 # cd .. && rm -rf tls-shunt-proxy-0.6.1
 Source0:        %{gosource}
 Source1:        vendor.tar.gz
+
+BuildRequires:  systemd-rpm-macros
+Requires(pre):  shadow-utils
+%{?systemd_requires}
 
 %description
 A tool to shunt TLS traffic.
