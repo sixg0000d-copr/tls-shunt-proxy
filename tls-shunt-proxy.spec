@@ -30,6 +30,7 @@ User Guide: https://guide.v2fly.org/advanced/tcp_tls_shunt_proxy.html.
 
 
 %prep
+# prep: sources
 %setup -q -a 1
 %global gobuilddir %{_builddir}/%{archivename}/_build
 if [[ ! -e "%{gobuilddir}/bin" ]] ; then
@@ -42,21 +43,41 @@ if [[ ! -e "%{gobuilddir}/src/%{goipath}" ]] ; then
 fi
 cd %{gobuilddir}/src/%{goipath}
 
+# prep: config
+install -m 0644 -vp config.simple.yaml            %{gobuilddir}/config.yaml
+
+# prep: systemd unit file
+install -m 0644 -vp dist/tls-shunt-proxy.service  %{gobuilddir}/tsp.service
+
 
 %build
+# build: binary
 export LDFLAGS="-linkmode=external "
-%gobuild -o %{gobuilddir}/bin/tls-shunt-proxy %{goipath}
+%gobuild -o %{gobuilddir}/bin/tsp %{goipath}
 unset LDFLAGS
 
 
 %install
-install -m 0755 -vd                                    %{buildroot}%{_bindir}
-install -m 0755 -vp %{gobuilddir}/bin/tls-shunt-proxy  %{buildroot}%{_bindir}/
+# install: binary
+install -m 0755 -vd                            %{buildroot}%{_bindir}
+install -m 0755 -vp %{gobuilddir}/bin/tsp      %{buildroot}%{_bindir}/tls-shunt-proxy
+# install: config
+install -m 0755 -vd                            %{buildroot}%{_sysconfdir}/tls-shunt-proxy
+install -m 0644 -vp %{gobuilddir}/config.yaml  %{buildroot}%{_sysconfdir}/tls-shunt-proxy/config.json
+# install: systemd unit file
+install -m 0755 -vd                            %{buildroot}%{_unitdir}
+install -m 0644 -vp %{gobuilddir}/tsp.service  %{buildroot}%{_unitdir}/tls-shunt-proxy.service
 
 
 %files
 %doc README.md
+# binary
 %{_bindir}/tls-shunt-proxy
+# config
+%dir               %{_sysconfdir}/tls-shunt-proxy
+%config(noreplace) %{_sysconfdir}/tls-shunt-proxy/config.json
+# systemd unit file
+%{_unitdir}/tls-shunt-proxy.service
 
 
 %changelog
