@@ -80,6 +80,33 @@ install -m 0644 -vp %{gobuilddir}/tsp.service  %{buildroot}%{_unitdir}/tls-shunt
 %{_unitdir}/tls-shunt-proxy.service
 
 
+# Scriptlets >>
+%pre
+getent group %{name} >/dev/null || groupadd -r %{name}
+getent passwd %{name} >/dev/null || \
+    (useradd -r \
+    -g %{name} \
+    -d %{_localstatedir}/%{name} \
+    -s /sbin/nologin \
+    -c "User for running %{name}" %{name} && \
+    echo "  User %{name} created.")
+exit 0
+
+%post
+%systemd_post tls-shunt-proxy.service
+
+%preun
+%systemd_preun tls-shunt-proxy.service
+
+if [ $1 -eq 0 ] && (getent passwd %{name} >/dev/null); then
+    # Package removal, not upgrade
+    echo "  You may should remove user %{name} mannually."
+fi
+
+%postun
+%systemd_postun_with_restart tls-shunt-proxy.service
+# << Scriptlets
+
 %changelog
 * Sat Nov 21 2020 sixg0000d <sixg0000d@gmail.com> - 0.6.1-1
 - Initial package
