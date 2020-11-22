@@ -36,6 +36,9 @@ User Guide: https://guide.v2fly.org/advanced/tcp_tls_shunt_proxy.html.
 %prep
 # prep: sources
 %setup -q -a 1
+
+# prep: rhel
+%if 0%{?rhel}
 %global gobuilddir %{_builddir}/%{archivename}/_build
 if [[ ! -e "%{gobuilddir}/bin" ]] ; then
     install -m 0755 -vd %{gobuilddir}/bin
@@ -46,6 +49,7 @@ if [[ ! -e "%{gobuilddir}/src/%{goipath}" ]] ; then
     ln -fs %{_builddir}/%{archivename} %{gobuilddir}/src/%{goipath}
 fi
 cd %{gobuilddir}/src/%{goipath}
+%endif
 
 # prep: config
 install -m 0644 -vp config.simple.yaml            %{gobuilddir}/config.yaml
