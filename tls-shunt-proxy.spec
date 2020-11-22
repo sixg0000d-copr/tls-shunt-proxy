@@ -56,7 +56,7 @@ cd %{gosourcedir}
 %build
 # build: binary
 export LDFLAGS="-linkmode=external "
-%gobuild -o %{gobuilddir}/bin/tsp %{goipath}
+%gobuild -o %{gobuilddir}/bin/tls-shunt-proxy %{goipath}
 unset LDFLAGS
 
 # build: systemd unit file
@@ -65,16 +65,16 @@ sed -e "s|/usr/local/bin|%{_bindir}|g" %{gosourcedir}/dist/tls-shunt-proxy.servi
 
 %install
 # install: binary
-install -m 0755 -vd                            %{buildroot}%{_bindir}
-install -m 0755 -vp %{gobuilddir}/bin/tsp      %{buildroot}%{_bindir}/tls-shunt-proxy
+install -m 0755 -vd                                    %{buildroot}%{_bindir}
+install -m 0755 -vp %{gobuilddir}/bin/tls-shunt-proxy  %{buildroot}%{_bindir}/tls-shunt-proxy
 # install: config
-install -m 0755 -vd                            %{buildroot}%{_sysconfdir}/tls-shunt-proxy
-install -m 0644 -vp %{gosourcedir}/config.yaml %{buildroot}%{_sysconfdir}/tls-shunt-proxy/config.yaml
+install -m 0755 -vd                                    %{buildroot}%{_sysconfdir}/tls-shunt-proxy
+install -m 0644 -vp %{gosourcedir}/config.simple.yaml  %{buildroot}%{_sysconfdir}/tls-shunt-proxy/config.yaml
 # install: systemd unit file
-install -m 0755 -vd                            %{buildroot}%{_unitdir}
-install -m 0644 -vp %{gobuilddir}/tsp.service  %{buildroot}%{_unitdir}/tls-shunt-proxy.service
+install -m 0755 -vd                                    %{buildroot}%{_unitdir}
+install -m 0644 -vp %{gobuilddir}/tsp.service          %{buildroot}%{_unitdir}/tls-shunt-proxy.service
 # install: ocsp dir
-install -m 0755 -vd                            %{buildroot}%{_sysconfdir}/ssl/tls-shunt-proxy
+install -m 0755 -vd                                    %{buildroot}%{_sysconfdir}/ssl/tls-shunt-proxy
 
 
 %files
