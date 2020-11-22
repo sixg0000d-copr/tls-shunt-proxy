@@ -25,6 +25,7 @@ Source1:        vendor.tar.gz
 
 BuildRequires:  systemd-rpm-macros
 Requires(pre):  shadow-utils
+Requires:       glibc
 %{?systemd_requires}
 
 %description
