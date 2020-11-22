@@ -52,10 +52,10 @@ cd %{gobuilddir}/src/%{goipath}
 %endif
 
 # prep: config
-install -m 0644 -vp config.simple.yaml            %{gobuilddir}/config.yaml
+install -m 0644 -vp config.simple.yaml                                %{gobuilddir}/config.yaml
 
 # prep: systemd unit file
-install -m 0644 -vp dist/tls-shunt-proxy.service  %{gobuilddir}/tsp.service
+sed -e "s|/usr/local/bin|%{_bindir}|g" dist/tls-shunt-proxy.service > %{gobuilddir}/tsp.service
 
 
 %build
