@@ -48,14 +48,9 @@ if [[ ! -e "%{gobuilddir}/src/%{goipath}" ]] ; then
     install -m 0755 -vd $(dirname %{gobuilddir}/src/%{goipath})
     ln -fs %{_builddir}/%{archivename} %{gobuilddir}/src/%{goipath}
 fi
-cd %{gobuilddir}/src/%{goipath}
+%global gosourcedir %{gobuilddir}/src/%{goipath}
+cd %{gosourcedir}
 %endif
-
-# prep: config
-install -m 0644 -vp config.simple.yaml                                %{gobuilddir}/config.yaml
-
-# prep: systemd unit file
-sed -e "s|/usr/local/bin|%{_bindir}|g" dist/tls-shunt-proxy.service > %{gobuilddir}/tsp.service
 
 
 %build
@@ -64,6 +59,9 @@ export LDFLAGS="-linkmode=external "
 %gobuild -o %{gobuilddir}/bin/tsp %{goipath}
 unset LDFLAGS
 
+# build: systemd unit file
+sed -e "s|/usr/local/bin|%{_bindir}|g" %{gosourcedir}/dist/tls-shunt-proxy.service > %{gobuilddir}/tsp.service
+
 
 %install
 # install: binary
@@ -71,7 +69,7 @@ install -m 0755 -vd                            %{buildroot}%{_bindir}
 install -m 0755 -vp %{gobuilddir}/bin/tsp      %{buildroot}%{_bindir}/tls-shunt-proxy
 # install: config
 install -m 0755 -vd                            %{buildroot}%{_sysconfdir}/tls-shunt-proxy
-install -m 0644 -vp %{gobuilddir}/config.yaml  %{buildroot}%{_sysconfdir}/tls-shunt-proxy/config.yaml
+install -m 0644 -vp %{gosourcedir}/config.yaml %{buildroot}%{_sysconfdir}/tls-shunt-proxy/config.yaml
 # install: systemd unit file
 install -m 0755 -vd                            %{buildroot}%{_unitdir}
 install -m 0644 -vp %{gobuilddir}/tsp.service  %{buildroot}%{_unitdir}/tls-shunt-proxy.service
