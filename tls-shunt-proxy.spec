@@ -8,7 +8,7 @@ Version:                0.6.1
 %gometa
 
 Name:           tls-shunt-proxy
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A tool to shunt TLS traffic
 License:        None
 URL:            %{gourl}
@@ -35,22 +35,24 @@ User Guide: https://guide.v2fly.org/advanced/tcp_tls_shunt_proxy.html.
 
 %prep
 # prep: sources
-%setup -q -a 1
-
-# prep: rhel
 %if 0%{?rhel}
+%forgeautosetup
 %global gobuilddir %{_builddir}/%{archivename}/_build
 if [[ ! -e "%{gobuilddir}/bin" ]] ; then
     install -m 0755 -vd %{gobuilddir}/bin
     export GOPATH="%{gobuilddir}"
 fi
-if [[ ! -e "%{gobuilddir}/src/%{goipath}" ]] ; then
-    install -m 0755 -vd $(dirname %{gobuilddir}/src/%{goipath})
-    ln -fs %{_builddir}/%{archivename} %{gobuilddir}/src/%{goipath}
-fi
 %global gosourcedir %{gobuilddir}/src/%{goipath}
+if [[ ! -e "%{gosourcedir}" ]] ; then
+    install -m 0755 -vd $(dirname %{gosourcedir})
+    ln -fs %{_builddir}/%{archivename} %{gosourcedir}
+fi
 cd %{gosourcedir}
+%else
+%goprep
 %endif
+
+%setup -qTD -a 1
 
 
 %build
